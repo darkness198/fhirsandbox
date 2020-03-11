@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActiveCondition, Patient } from './types';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Sort } from '@angular/material/sort';
 
 
@@ -16,6 +16,7 @@ export class AppComponent {
   loadingPatient = true;
   loadingConditions = true;
   constructor(private http: HttpClient) {
+
     this.getPatientData(4342010).subscribe((res: { entry }) => {
       const patientResource = res.entry[0].resource;
       const unformattedName: string = patientResource.name.filter(name => name.use === 'official')[0].text;
@@ -52,12 +53,20 @@ export class AppComponent {
   }
 
   getPatientData(patientId: number) {
-    return this.http.get(`https://fhir-open.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/Patient?_id=${patientId}`);
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json+fhir',
+        "Accept": "application/json+fhir" });
+    let options = { headers: headers };
+    return this.http.get(`https://fhir-open.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/Patient?_id=${patientId}`, options);
 
   }
 
   getConditionData(patientId: number) {
-    return this.http.get(`https://fhir-open.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/Condition?patient=${patientId}`);
+    let headers = new HttpHeaders({
+        'Content-Type': 'application/json+fhir',
+        "Accept": "application/json+fhir" });
+    let options = { headers: headers };
+    return this.http.get(`https://fhir-open.sandboxcerner.com/dstu2/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca/Condition?patient=${patientId}`, options);
   }
 
   sortData(sort: Sort) {
